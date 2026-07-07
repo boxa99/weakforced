@@ -219,6 +219,14 @@ initialized. For example:
 		> reloadGeoIPDBs
 		reloadGeoIPDBs() successful
 
+* reloadGeoIP2DBs() - Reload all GeoIP2 (MMDB) DBs that have been
+created with newGeoIP2DB(). Each DB is reloaded from its original
+filename; if a DB cannot be reloaded, the existing DB is kept. For
+example:
+
+		> reloadGeoIP2DBs()
+		reloadGeoIP2DBs(): Reloaded GeoIP2 DB CityDB
+
 * showVersion() - Returns the current version of the wforce
   server. For example:
 

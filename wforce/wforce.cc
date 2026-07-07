@@ -849,6 +849,7 @@ char* my_generator(const char* text, int state)
       "checkWhitelistJA3(",
       "checkWhitelistIPJA3(",
       "reloadGeoIPDBs()",
+      "reloadGeoIP2DBs()",
       "addCustomStat(",
       "setSiblingsWithKey(",
       "addSiblingWithKey(",

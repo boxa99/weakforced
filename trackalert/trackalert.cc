@@ -440,6 +440,7 @@ char* my_generator(const char* text, int state)
       "newNetmaskGroup",
       "makeKey",
       "reloadGeoIPDBs()",
+      "reloadGeoIP2DBs()",
       "setKey",
       "testCrypto",
       "showCustomWebHooks()",

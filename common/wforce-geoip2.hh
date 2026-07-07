@@ -52,9 +52,12 @@ public:
   bool lookupBoolValue(const ComboAddress& address, const std::vector<std::pair<unsigned int, std::string>>& attrs);
   double lookupDoubleValue(const ComboAddress& address, const std::vector<std::pair<unsigned int, std::string>>& attrs);
 
+  const std::string& getFilename() const { return d_filename; }
+
   static std::shared_ptr<WFGeoIP2DB> makeWFGeoIP2DB(const std::string& filename);
 private:
   MMDB_s d_db;
+  std::string d_filename;
   bool d_init = false;
   bool lookupDataValue(const ComboAddress& address, const std::vector<std::pair<unsigned int, std::string>>& attrs, MMDB_entry_data_s& ret_data);
   bool mmdbLookup(const std::string& ip, MMDB_lookup_result_s& res);
@@ -62,5 +65,11 @@ private:
 
 extern std::mutex geoip2_mutx;
 extern std::map<std::string, std::shared_ptr<WFGeoIP2DB>> geoip2Map;
+
+// Reload all the GeoIP2 DBs in geoip2Map from their original filenames.
+// Returns a vector of (DB name, error string) pairs, one per DB; an empty
+// error string indicates the reload was successful. On failure the
+// existing DB is kept.
+std::vector<std::pair<std::string, std::string>> reloadGeoIP2DBs();
 
 #endif // HAVE_MMDB

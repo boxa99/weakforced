@@ -30,7 +30,7 @@
 std::mutex geoip2_mutx;
 std::map<std::string, std::shared_ptr<WFGeoIP2DB>> geoip2Map;
 
-WFGeoIP2DB::WFGeoIP2DB(const std::string& filename)
+WFGeoIP2DB::WFGeoIP2DB(const std::string& filename) : d_filename(filename)
 {
   int res;
   memset(&d_db, 0, sizeof(d_db));
@@ -223,6 +223,39 @@ double WFGeoIP2DB::lookupDoubleValue(const ComboAddress& address, const std::vec
 std::shared_ptr<WFGeoIP2DB> WFGeoIP2DB::makeWFGeoIP2DB(const std::string& filename)
 {
   return std::make_shared<WFGeoIP2DB>(filename);
+}
+
+std::vector<std::pair<std::string, std::string>> reloadGeoIP2DBs()
+{
+  std::vector<std::pair<std::string, std::string>> results;
+  std::vector<std::pair<std::string, std::string>> dbs;
+
+  // Snapshot the DB names and filenames so we don't hold the lock
+  // while opening the new DBs
+  {
+    std::lock_guard<std::mutex> lock(geoip2_mutx);
+    for (const auto& i : geoip2Map) {
+      dbs.emplace_back(i.first, i.second->getFilename());
+    }
+  }
+  for (const auto& db : dbs) {
+    try {
+      auto newdb = WFGeoIP2DB::makeWFGeoIP2DB(db.second);
+      std::lock_guard<std::mutex> lock(geoip2_mutx);
+      auto it = geoip2Map.find(db.first);
+      if (it != geoip2Map.end()) {
+        // In-flight readers keep the old DB alive via their shared_ptr;
+        // it is closed when the last reference is dropped
+        it->second = newdb;
+      }
+      results.emplace_back(db.first, std::string());
+    }
+    catch (const WforceException& e) {
+      // Keep the existing DB in the map
+      results.emplace_back(db.first, e.reason);
+    }
+  }
+  return results;
 }
 
 #endif // HAVE_MMDB

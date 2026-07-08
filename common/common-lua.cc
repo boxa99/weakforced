@@ -467,6 +467,25 @@ void setupCommonLua(bool client,
     c_lua.writeFunction("newGeoIP2DB", [](const std::string& name, const std::string& filename) { });
   }
 
+  if (!multi_lua) {
+    c_lua.writeFunction("reloadGeoIP2DBs", []() {
+        for (const auto& res : reloadGeoIP2DBs()) {
+          if (res.second.empty()) {
+            boost::format fmt("reloadGeoIP2DBs(): Reloaded GeoIP2 DB %s\n");
+            g_outputBuffer += (fmt % res.first).str();
+          }
+          else {
+            boost::format fmt("reloadGeoIP2DBs(): Error reloading GeoIP2 DB %s (%s)\n");
+            errlog("reloadGeoIP2DBs(): Error reloading GeoIP2 DB %s (%s)", res.first, res.second);
+            g_outputBuffer += (fmt % res.first % res.second).str();
+          }
+        }
+      });
+  }
+  else {
+    c_lua.writeFunction("reloadGeoIP2DBs", []() { });
+  }
+
   c_lua.writeFunction("getGeoIP2DB", [](const std::string& name) {
       std::lock_guard<std::mutex> lock(geoip2_mutx);
       auto it = geoip2Map.find(name);

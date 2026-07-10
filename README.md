@@ -58,7 +58,7 @@ $ git clone https://github.com/PowerDNS/weakforced.git
 $ cd weakforced
 $ git submodule init
 $ git submodule update
-$ builder/build.sh debian-bullseye | debian-bookworm | debian-trixie | ubuntu-noble | el-8 | el-9 | el-10 | ol-8 | ol-9 | rl-10 | amazon-2023
+$ builder/build.sh debian-bullseye | debian-bookworm | debian-trixie | ubuntu-jammy | ubuntu-noble | ubuntu-resolute | el-8 | el-9 | el-10 | ol-8 | ol-9 | rl-10 | amazon-2023
 ```
 This will build packages (`wforce`,`wforce-trackalert` and `wforce-debuginfo`) for the appropriate OS. You will need docker for the builder to work.
 

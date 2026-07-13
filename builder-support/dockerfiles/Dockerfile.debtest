@@ -6,6 +6,11 @@ FROM dist-base as dist
 COPY --from=sdist /sdist /sdist
 COPY --from=package-builder /dist /dist
 
+# Refresh the apt index before installing -- the dist-base layer's index
+# can be hours stale by the time we get here, and version-pinned URLs for
+# security updates get 404 on the mirror once a new point release is out.
+RUN apt-get update
+
 # Install built packages with dependencies
 RUN apt install -y /dist/*.deb
 

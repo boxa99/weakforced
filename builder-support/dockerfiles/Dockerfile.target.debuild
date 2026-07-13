@@ -1,6 +1,6 @@
 FROM dist-base as package-builder
 ARG APT_URL
-RUN apt-get -y install devscripts dpkg-dev build-essential
+RUN apt-get -y install devscripts equivs dpkg-dev build-essential
 
 RUN mkdir /dist /wforce
 WORKDIR /wforce

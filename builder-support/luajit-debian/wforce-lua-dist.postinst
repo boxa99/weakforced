@@ -4,6 +4,12 @@
 
 set -e
 
-/sbin/ldconfig
+# Force synchronous ldconfig. On Ubuntu (>= 24.04), /sbin/ldconfig is a
+# wrapper that defers via `dpkg-trigger --no-await ldconfig` when invoked
+# from a maintscript -- meaning the ld.so.cache update would land at the
+# end of the dpkg run, after dependent packages' (wforce/wforce-trackalert)
+# postinst scripts have already tried to exec the wforce binary and failed
+# to find libluajit-5.1.so.2. Opt out so the cache is updated immediately.
+LDCONFIG_NOTRIGGER=y /sbin/ldconfig
 
 exit 0

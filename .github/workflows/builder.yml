@@ -21,6 +21,9 @@ jobs:
           - debian-bullseye
           - debian-bookworm
           - debian-trixie
+          - ubuntu-jammy
+          - ubuntu-noble
+          - ubuntu-resolute
     steps:
       - uses: actions/checkout@v7
         with:
